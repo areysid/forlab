@@ -8,7 +8,7 @@ This is a simple web based interactive TicTacToe game with a friendly UI which i
 > Classic X and O TicTacToe gameplay.
 > Local multiplayer for two players.
 > Names can be edited to a name of user's choice.
-> Name csn include numbers and special characters.
+> Name can include numbers and special characters.
 > A propmt message that showcases the winner or a draw after a round ends.
 > A leaderboard that updates the scores of the players after every round.
 > Option to restart the game after a win or a draw.
