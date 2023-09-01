@@ -1,4 +1,5 @@
-# TicTacToe Game.
+# TicTacToe Game
+TicTacToe game based on HTML,CSS and JavaScript: https://kairu-22.github.io/TicTacToe/
 
 ## Description
 This is a simple web based interactive TicTacToe game with a friendly UI which is made using JavaScript, HTML and CSS. 
