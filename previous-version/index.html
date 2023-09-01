@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic-Tac-Toe</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap');
+    </style>
+<style>
+    #active-game {
+    text-align: center;
+    margin: 2rem 0 5rem 0;
+    display: none;
+
+}
+
+#game-over {
+    max-width: 40rem;
+    margin: auto;
+    width: 90%;
+    padding: 1rem 2rem;
+    background-color: rgb(50, 5, 87);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    color: white;
+    display: none;
+
+}
+
+#active-game h2 {
+    font-size: 2.5rem;
+    margin: 0.5rem 0;
+}
+
+#active-player-name {
+    font-weight: bold;
+    color: rgb(50, 5, 87);
+}
+
+#game-board {
+    list-style: none;
+    margin: 1rem 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 6rem);
+    grid-template-rows: repeat(3, 6rem);
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+#game-board li {
+    background-color: rgb(215, 187, 247);
+    border-radius: 2px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2.5rem;
+    font-weight: bold;
+}
+
+#game-board li:hover{
+background-color: rgb(112, 13, 204);
+}
+
+#game-board li.disabled{
+    background-color: rgb(112, 13, 204);
+    color: white;
+    cursor: default;
+    transition:.5s;
+    box-shadow: -10px 10px 10px rgba(0,0,0,.5);
+    
+}
+#config-overlay {
+    text-align: center;
+}
+
+#config-overlay h2 {
+    margin: 0.5rem 0;
+}
+
+.form-control {
+    margin: 0.5rem 0;
+}
+
+.form-control label {
+    display: block;
+    margin: 0.5rem;
+    font-weight: bold;
+}
+
+.form-control input {
+    font: inherit;
+    border: solid 1px rgb(204, 204, 204);
+    width: 15rem;
+    padding: 0.35rem;
+}
+
+
+#game-config {
+    width: 90%;
+    max-width: 40rem;
+    margin: 3rem auto;
+    text-align: center;
+}
+
+#game-config ol {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+}
+
+
+#game-config li {
+
+    margin: 1rem;
+    padding: 1rem;
+    width: 50%;
+    background-color: rgb(243, 227, 255);
+    border-radius: 4px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+#game-config h2 {
+font-size: 1rem;
+margin: 0.5rem 0;
+
+}
+
+#game-config h3 {
+    font-size: 1.5rem;
+    margin: 0.5rem 0;
+    color: rgb(94, 4, 168);
+
+}
+
+.player-symbol{
+    font-size: 2rem;
+    font-weight: bold;
+    color: rgb(47, 4, 82);
+    margin: 0.5rem 0;
+}
+
+.error label{
+color: rgb(136, 2, 2);
+}
+
+.error input{
+border-color: rgb(136, 2, 2);
+color: rgb(136, 2, 2);
+background-color: rgb(253, 219, 219);
+
+}
+.modal {
+    position: fixed;
+    top: 20%;
+    left: 5%;
+    width: 90%;
+    background-color: white;
+    padding: 1rem;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0,0.2);
+    display: none;
+}
+
+#backdrop{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: none;
+}
+
+@media(min-width:48rem) {
+    .modal{
+        left:  calc(50% - 20rem);
+        width: 40rem;
+    }
+}
+body {
+    margin: 0;
+    font-family: 'Open Sans', sans-serif;
+    color: rgb(44, 41, 44);
+    background-color: rgb(247, 239, 247);
+}
+
+a{
+    text-decoration: none;
+    color: inherit;
+}
+
+#main-header {
+    background-color: rgb(140, 0, 255);
+    color: white;
+    padding: 2rem 5%;
+    text-align: center;
+}
+
+.btn {
+    font: inherit;
+    padding: 0.5rem 1.5rem;
+    background-color:rgb(140, 0, 255);
+    border: 1px solid rgb(140, 0, 255);
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn-alt {
+    background-color: transparent;
+    border-color: transparent;
+    color: rgb(140, 0, 255);
+}
+
+.btn:hover{
+background-color:rgb(79,   10, 190) ;
+border-color: rgb(79, 10, 190);
+}
+
+.btn-alt:hover{
+    background-color: rgb(230, 201, 252);
+    border-color: transparent;
+
+}
+</style>
+</head>
+
+<body>
+    <div id="backdrop"></div>
+    <header id="main-header">
+        <h1>Play Tic - Tac - Toe</h1>
+        <p>Build By Suraj Dhoundiyal</p>
+    </header>
+    <main>
+        <aside class="modal" id="config-overlay">
+            <h2>Choose Your Name</h2>
+            <form class="form-control">
+                <div>
+                    <label for="PlayerName">Player Name</label>
+                    <input type="text" name="PlayerName" id="PlayerName" required>
+                </div>
+                <p id="config-error"></p>
+                <div>
+                    <button type="reset" class="btn btn-alt" id="cancel-config-btn">Cancel</button>
+                    <button type="submit" class="btn">Confirm</button>
+                </div>
+            </form>
+        </aside>
+
+        <section id="game-config">
+
+            <ol>
+                <li>
+                    <article id="player-1-data">
+                        <h2>Player 1</h2>
+                        <h3>PLAYER NAME</h3>
+                        <p class="player-symbol">X</p>
+                        <button class="btn btn-alt" id="edit-player-1-btn" data-playerid="1">Edit</button>
+                    </article>
+                </li>
+                <li>
+                    <article id="player-2-data">
+                        <h2>Player 2</h2>
+                        <h3>PLAYER NAME</h3>
+                        <p class="player-symbol">O</p>
+                        <button class="btn btn-alt" id="edit-player-2-btn" data-playerid="2">Edit</button>
+                    </article>
+                </li>
+            </ol>
+             <button class="btn" id="start-game-btn"><a href="#game-board">Start New Game</a></button>
+        </section>
+
+        <section id="active-game">
+            <article id="game-over">
+                <h2>You Won! <span id="winner-name">PLAYER NAME</span></h2>
+                <p>Click " Start New Game" above, to start a new game!</p>
+            </article>
+
+            <p>It's Your Turn <span id="active-player-name">PLAYER NAME</span>!</p>
+            <ol id="game-board">
+                <li data-col="1" data-row="1"></li>
+                <li data-col="2" data-row="1"></li>
+                <li data-col="3" data-row="1"></li>
+
+                <li data-col="1" data-row="2"></li>
+                <li data-col="2" data-row="2"></li>
+                <li data-col="3" data-row="2"></li>
+                
+                <li data-col="1" data-row="3"></li>
+                <li data-col="2" data-row="3"></li>
+                <li data-col="3" data-row="3"></li>
+
+            </ol>
+
+        </section>
+    </main>
+
+
+
+
+
+<script>
+
+const gameData =[
+    [0,0,0],
+    [0,0,0],
+    [0,0,0],
+];
+
+
+let editedPlayer = 0;
+let activePlayer = 0;
+let currentRound = 1;
+let gameIsOver=false;
+const player = [
+    {
+        name: '',
+        symbol: 'X'
+    },
+    {
+        name: '',
+        symbol: 'O'
+    },
+];
+
+const playerConfigOverlayElement = document.getElementById('config-overlay');
+const backDropElement = document.getElementById('backdrop');
+const formElement = document.querySelector('form');
+const errorOutputElement = document.getElementById('config-error');
+const activePlayerNameElement= document.getElementById('active-player-name');
+const gameOverElement=document.getElementById('game-over');
+
+const editPlayer1btnElement = document.getElementById('edit-player-1-btn');
+const editPlayer2btnElement = document.getElementById('edit-player-2-btn');
+const cancelConfigBtnElement = document.getElementById('cancel-config-btn');
+
+
+const startNewGameBtnElement=document.getElementById('start-game-btn');
+
+const gameBoardElement = document.getElementById('game-board');
+
+
+editPlayer1btnElement.addEventListener('click', openPlayerConfig);
+editPlayer2btnElement.addEventListener('click', openPlayerConfig);
+cancelConfigBtnElement.addEventListener('click', closePlayerConfig);
+backDropElement.addEventListener('click', closePlayerConfig);
+
+formElement.addEventListener('submit', savePlayerConfig);
+
+
+startNewGameBtnElement.addEventListener('click',startNewGame);
+gameBoardElement.addEventListener('click',selectGameField);
+
+
+
+function openPlayerConfig(event) {
+    editedPlayer = +event.target.dataset.playerid;
+    playerConfigOverlayElement.style.display = 'block';
+    backDropElement.style.display = 'block';
+}
+
+function closePlayerConfig() {
+    playerConfigOverlayElement.style.display = 'none';
+    backDropElement.style.display = 'none';
+    formElement.firstElementChild.classList.remove('error');
+    errorOutputElement.textContent = '';
+    formElement.firstElementChild.lastElementChild.value='';
+}
+
+function savePlayerConfig(event) {
+    event.preventDefault();
+    const formData = new FormData(event.target);
+    const enteredPlayerName = formData.get('PlayerName').trim();
+
+    if (!enteredPlayerName) {
+        event.target.firstElementChild.classList.add('error');
+        errorOutputElement.textContent = 'Please enter a valid name!';
+
+        return;
+    }
+
+    const updatedPlayerDataElement = document.getElementById('player-' + editedPlayer + '-data');
+    updatedPlayerDataElement.children[1].textContent = enteredPlayerName;
+
+    player[editedPlayer-1].name=enteredPlayerName;
+    closePlayerConfig();
+}
+
+
+function resetGameStatus() {
+    activePlayer = 0;
+    currentRound = 1;
+    gameIsOver = false;
+    gameOverElement.firstElementChild.innerHTML = 'You Won! <span id="winner-name">PLAYER NAME</span>';
+    gameOverElement.style.display = 'none';
+    let gameBoardIndex = 0;
+
+    for (let i = 0; i <= 2; i++) {
+        for (let j = 0; j <= 2; j++) {
+            gameData[i][j] = 0;
+            const gameBoardItemElement = gameBoardElement.children[gameBoardIndex];
+            gameBoardItemElement.textContent = '';
+            gameBoardItemElement.classList.remove('disabled');
+            gameBoardIndex++;
+        }
+    }
+
+}
+
+function startNewGame() {
+
+    if (player[0].name === '' || player[1].name === '') {
+        alert('Please set custom name for both players!')
+        return;
+    }
+
+
+    resetGameStatus();
+    activePlayerNameElement.textContent = player[activePlayer].name;
+    document.getElementById('active-game').style.display = 'block';
+}
+
+
+
+
+
+function switchPlayer() {
+    if (activePlayer === 0) {
+        activePlayer = 1;
+    } else {
+        activePlayer = 0;
+    }
+    activePlayerNameElement.textContent = player[activePlayer].name;
+}
+
+
+
+function selectGameField(event) {
+
+    if (event.target.tagName !== 'LI' || gameIsOver) {
+        return;
+    }
+
+    const selectedField = event.target;
+
+    const selectedColumn = selectedField.dataset.col - 1;
+    const selectedRow = selectedField.dataset.row - 1;
+
+    if (gameData[selectedColumn][selectedRow] > 0) {
+        alert("Please select an empty field!");
+        return;
+    }
+
+    selectedField.textContent = player[activePlayer].symbol;
+    selectedField.classList.add('disabled');
+
+    gameData[selectedColumn][selectedRow] = activePlayer + 1;
+
+    const winnerId = checkForGameOver();
+    if (winnerId !== 0) {
+        endGame(winnerId);
+    }
+    currentRound++;
+    switchPlayer();
+}
+
+function checkForGameOver() {
+    for (let i = 0; i <= 2; i++) {
+        if (gameData[i][0] > 0 && gameData[i][0] === gameData[i][1] && gameData[i][1] === gameData[i][2]) {
+            return gameData[i][0];
+        }
+    }
+    for (let i = 0; i <= 2; i++) {
+        if (gameData[0][i] > 0 && gameData[0][i] === gameData[1][i] && gameData[1][i] === gameData[2][i]) {
+            return gameData[0][i];
+        }
+    }
+
+    if (gameData[0][0] > 0 && gameData[0][0] === gameData[1][1] && gameData[1][1] === gameData[2][2]) {
+        return gameData[0][0];
+    }
+
+    //for dia topright to bottomleft
+    if (gameData[2][0] > 0 && gameData[2][0] === gameData[1][1] && gameData[1][1] === gameData[0][2]) {
+        return gameData[2][0];
+    }
+
+    if (currentRound === 9) {
+        return -1;
+    }
+
+    return 0;
+}
+
+function endGame(winnerId) {
+    gameIsOver = true;
+    gameOverElement.style.display = 'block';
+    if (winnerId > 0) {
+        gameOverElement.firstElementChild.firstElementChild.textContent = player[winnerId - 1].name;
+    }
+    else {
+        gameOverElement.firstElementChild.textContent = 'it\'s a DRAW!';
+    }
+
+}
+</script>
+</body>
+
+</html>
